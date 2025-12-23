@@ -198,7 +198,7 @@ export default function Login() {
           transition={{ delay: 0.7 }}
           className="text-center text-primary-300 mt-6 text-sm"
         >
-          © 2025 Tecno Rewards - Todos los derechos reservados
+          © 2025 Tecno Rewards por: Luis Felipe Rodriguez- Todos los derechos reservados
         </motion.p>
       </div>
     </div>
