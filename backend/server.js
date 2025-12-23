@@ -16,6 +16,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Middleware para configurar el encabezado Cross-Origin-Opener-Policy
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  next();
+});
+
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB conectado - COMMETP'))
