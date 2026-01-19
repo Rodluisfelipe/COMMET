@@ -52,9 +52,39 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// GET - Generar código automático para contrato
+router.get('/generar-codigo', async (req, res) => {
+  try {
+    const count = await Contrato.countDocuments();
+    const year = new Date().getFullYear();
+    const codigo = `CTR-${year}-${String(count + 1).padStart(5, '0')}`;
+    res.json({ codigo });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al generar código', error: error.message });
+  }
+});
+
+// GET - Verificar si un código ya existe
+router.get('/verificar-codigo/:codigo', async (req, res) => {
+  try {
+    const existe = await Contrato.findOne({ codigo: req.params.codigo });
+    res.json({ existe: !!existe });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al verificar código', error: error.message });
+  }
+});
+
 // POST - Crear contrato
 router.post('/', async (req, res) => {
   try {
+    // Si se proporciona un código personalizado, verificar que no exista
+    if (req.body.codigo) {
+      const existeCodigo = await Contrato.findOne({ codigo: req.body.codigo });
+      if (existeCodigo) {
+        return res.status(400).json({ mensaje: `El código "${req.body.codigo}" ya existe. Por favor use otro.` });
+      }
+    }
+    
     const contrato = new Contrato(req.body);
     
     // Agregar estado inicial al historial
@@ -75,6 +105,10 @@ router.post('/', async (req, res) => {
     
     res.status(201).json(contrato);
   } catch (error) {
+    // Manejar error de código duplicado
+    if (error.code === 11000 && error.keyPattern?.codigo) {
+      return res.status(400).json({ mensaje: 'El código de contrato ya existe. Por favor use otro.' });
+    }
     res.status(400).json({ mensaje: 'Error al crear contrato', error: error.message });
   }
 });

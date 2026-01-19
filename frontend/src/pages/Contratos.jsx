@@ -20,7 +20,8 @@ import {
   DocumentTextIcon,
   SparklesIcon,
   UserGroupIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  BoltIcon
 } from '@heroicons/react/24/outline'
 
 const containerVariants = {
@@ -43,6 +44,7 @@ const tiposContrato = [
 ]
 
 const initialForm = {
+  codigo: '',
   tipo: 'venta_directa',
   empresa: '',
   cliente: {
@@ -69,6 +71,8 @@ export default function Contratos() {
   const [filtroEstado, setFiltroEstado] = useState('')
   const [filtroTipo, setFiltroTipo] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [generandoCodigo, setGenerandoCodigo] = useState(false)
+  const [codigoError, setCodigoError] = useState('')
   const { canEdit } = useAuth()
   
   useEffect(() => {
@@ -103,12 +107,45 @@ export default function Contratos() {
   
   const handleOpenModal = () => {
     setForm(initialForm)
+    setCodigoError('')
     setModalOpen(true)
   }
   
   const handleCloseModal = () => {
     setModalOpen(false)
     setForm(initialForm)
+    setCodigoError('')
+  }
+  
+  const handleGenerarCodigo = async () => {
+    setGenerandoCodigo(true)
+    try {
+      const response = await api.get('/contratos/generar-codigo')
+      setForm(prev => ({ ...prev, codigo: response.data.codigo }))
+      setCodigoError('')
+      toast.success('Código generado')
+    } catch (error) {
+      toast.error('Error al generar código')
+    } finally {
+      setGenerandoCodigo(false)
+    }
+  }
+  
+  const verificarCodigo = async (codigo) => {
+    if (!codigo.trim()) {
+      setCodigoError('')
+      return
+    }
+    try {
+      const response = await api.get(`/contratos/verificar-codigo/${encodeURIComponent(codigo)}`)
+      if (response.data.existe) {
+        setCodigoError('Este código ya existe')
+      } else {
+        setCodigoError('')
+      }
+    } catch (error) {
+      console.error('Error al verificar código')
+    }
   }
   
   const handleChange = (e) => {
@@ -126,11 +163,19 @@ export default function Contratos() {
   
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Validar que no haya error de código duplicado
+    if (codigoError) {
+      toast.error('El código de contrato ya existe')
+      return
+    }
+    
     setGuardando(true)
     
     try {
       const data = {
         ...form,
+        codigo: form.codigo.trim() || undefined, // Si está vacío, el backend genera uno
         empresa: form.empresa || null,
         montoTotal: parseFloat(form.montoTotal) || 0,
         deducciones: parseFloat(form.deducciones) || 0
@@ -382,6 +427,52 @@ export default function Contratos() {
         size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Código de Contrato */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <DocumentTextIcon className="w-4 h-4 inline mr-1" />
+              Código de Contrato
+            </label>
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  name="codigo"
+                  value={form.codigo}
+                  onChange={(e) => {
+                    const valor = e.target.value.toUpperCase()
+                    setForm(prev => ({ ...prev, codigo: valor }))
+                    // Verificar después de un pequeño delay
+                    clearTimeout(window.codigoTimeout)
+                    window.codigoTimeout = setTimeout(() => verificarCodigo(valor), 500)
+                  }}
+                  className={`w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 ${
+                    codigoError ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                  }`}
+                  placeholder="Ej: CTR-2026-00001 o dejar vacío para generar"
+                />
+                {codigoError && (
+                  <p className="text-xs text-red-500 mt-1">{codigoError}</p>
+                )}
+              </div>
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleGenerarCodigo}
+                disabled={generandoCodigo}
+                className="px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
+                title="Generar código automático"
+              >
+                <BoltIcon className={`w-5 h-5 ${generandoCodigo ? 'animate-spin' : ''}`} />
+                {generandoCodigo ? '' : 'Generar'}
+              </motion.button>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              Ingresa un código personalizado o usa el botón para generar uno automático. Si lo dejas vacío, se generará automáticamente.
+            </p>
+          </div>
+          
           {/* Empresa */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
