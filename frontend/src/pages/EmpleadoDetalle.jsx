@@ -186,6 +186,7 @@ export default function EmpleadoDetalle() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contrato</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cliente</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tipo</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Monto</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Comisión</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</th>
@@ -196,7 +197,7 @@ export default function EmpleadoDetalle() {
                   {comisiones?.comisiones?.length > 0 ? (
                     comisiones.comisiones.map((c, index) => (
                       <motion.tr 
-                        key={index} 
+                        key={c.participanteId || index} 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
@@ -214,6 +215,14 @@ export default function EmpleadoDetalle() {
                           </p>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600">{c.cliente}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                            {c.tipoComisionNombre || 'Comisión'}
+                          </span>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {c.tipoComision === 'porcentaje' ? `${c.valorComision}%` : formatCurrency(c.valorComision)}
+                          </p>
+                        </td>
                         <td className="px-4 py-3 text-right text-sm">{formatCurrency(c.montoContrato)}</td>
                         <td className="px-4 py-3 text-right">
                           <p className="font-semibold text-accent-600">
@@ -221,9 +230,6 @@ export default function EmpleadoDetalle() {
                               ? formatCurrency(c.comisionCalculada)
                               : formatCurrency(c.comisionEstimada)
                             }
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {c.tipoComision === 'porcentaje' ? `${c.valorComision}%` : 'Fijo'}
                           </p>
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -233,7 +239,7 @@ export default function EmpleadoDetalle() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="px-4 py-12 text-center">
+                      <td colSpan="6" className="px-4 py-12 text-center">
                         <DocumentTextIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500">No hay comisiones registradas</p>
                       </td>

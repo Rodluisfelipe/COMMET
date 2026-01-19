@@ -17,6 +17,9 @@ const liquidacionSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Contrato'
     },
+    participanteId: {
+      type: mongoose.Schema.Types.ObjectId  // ID del participante para identificar la comisión exacta
+    },
     codigoContrato: String,
     cliente: String,
     montoContrato: Number,

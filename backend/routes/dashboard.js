@@ -115,22 +115,27 @@ router.get('/consolidado/empleados', async (req, res) => {
       let totalPagado = 0;
       let totalPendiente = 0;
       let contratosActivos = 0;
+      let comisionesCount = 0;
       
       contratos.forEach(c => {
-        const participante = c.participantes.find(
+        // Buscar TODAS las participaciones del empleado (puede tener múltiples comisiones)
+        const participaciones = c.participantes.filter(
           p => p.empleado.toString() === emp._id.toString()
         );
         
-        if (participante) {
+        if (participaciones.length > 0) {
           contratosActivos++;
-          if (c.estado === 'pagado' || c.estado === 'liquidado') {
-            totalGenerado += participante.comisionCalculada || 0;
-            if (participante.estadoComision === 'pagada') {
-              totalPagado += participante.comisionCalculada || 0;
-            } else {
-              totalPendiente += participante.comisionCalculada || 0;
+          participaciones.forEach(participante => {
+            comisionesCount++;
+            if (c.estado === 'pagado' || c.estado === 'liquidado') {
+              totalGenerado += participante.comisionCalculada || 0;
+              if (participante.estadoComision === 'pagada') {
+                totalPagado += participante.comisionCalculada || 0;
+              } else {
+                totalPendiente += participante.comisionCalculada || 0;
+              }
             }
-          }
+          });
         }
       });
       

@@ -130,6 +130,7 @@ router.post('/', async (req, res) => {
       
       contratosParaLiquidar.push({
         contrato: contrato._id,
+        participanteId: participante._id, // Guardar ID para poder anular correctamente
         codigoContrato: contrato.codigo,
         cliente: contrato.cliente.nombre,
         montoContrato: contrato.montoTotal,
@@ -469,19 +470,21 @@ router.get('/:id/comprobante', async (req, res) => {
     const tableHeaderY = detalleY + 35;
     doc.rect(leftMargin, tableHeaderY, pageWidth, 20).fill('#1a1a1a');
     
-    // Columnas ajustadas para mejor distribución
+    // Columnas ajustadas para incluir tipo de comisión
     const col1 = leftMargin + 5;      // N°
-    const col2 = leftMargin + 30;     // Contrato
-    const col3 = leftMargin + 110;    // Cliente (más espacio)
-    const col4 = leftMargin + 310;    // Monto
-    const col5 = leftMargin + 420;    // Comisión
+    const col2 = leftMargin + 25;     // Contrato
+    const col3 = leftMargin + 95;     // Cliente
+    const col4 = leftMargin + 220;    // Tipo Comisión
+    const col5 = leftMargin + 330;    // Monto
+    const col6 = leftMargin + 430;    // Comisión
     
     doc.fontSize(8).font('Helvetica-Bold').fillColor('#ffffff');
     doc.text('N°', col1, tableHeaderY + 6);
     doc.text('CONTRATO', col2, tableHeaderY + 6);
     doc.text('CLIENTE', col3, tableHeaderY + 6);
-    doc.text('MONTO CONTRATO', col4, tableHeaderY + 6);
-    doc.text('COMISIÓN', col5, tableHeaderY + 6);
+    doc.text('TIPO', col4, tableHeaderY + 6);
+    doc.text('MONTO', col5, tableHeaderY + 6);
+    doc.text('COMISIÓN', col6, tableHeaderY + 6);
     
     // Filas de la tabla
     let tableY = tableHeaderY + 20;
@@ -491,17 +494,20 @@ router.get('/:id/comprobante', async (req, res) => {
       
       doc.fontSize(9).font('Helvetica').fillColor('#1a1a1a');
       doc.text(`${index + 1}`, col1, tableY + 9);
-      doc.font('Helvetica-Bold').text(c.codigoContrato, col2, tableY + 9, { width: 75 });
+      doc.font('Helvetica-Bold').text(c.codigoContrato, col2, tableY + 9, { width: 65 });
       
-      // Cliente con texto completo (sin cortar)
+      // Cliente con texto completo
       doc.font('Helvetica').text(c.cliente, col3, tableY + 5, { 
-        width: 190, 
+        width: 120, 
         height: 22,
-        ellipsis: false
+        ellipsis: true
       });
       
-      doc.text(`$ ${c.montoContrato.toLocaleString('es-CO')}`, col4, tableY + 9, { width: 100 });
-      doc.font('Helvetica-Bold').text(`$ ${c.comisionPagada.toLocaleString('es-CO')}`, col5, tableY + 9, { width: 100 });
+      // Tipo de comisión
+      doc.text(c.tipoComisionNombre || 'Comisión', col4, tableY + 9, { width: 100 });
+      
+      doc.text(`$ ${c.montoContrato.toLocaleString('es-CO')}`, col5, tableY + 9, { width: 90 });
+      doc.font('Helvetica-Bold').text(`$ ${c.comisionPagada.toLocaleString('es-CO')}`, col6, tableY + 9, { width: 90 });
       
       tableY += 28;
     });
@@ -616,9 +622,18 @@ router.post('/:id/anular', async (req, res) => {
     for (const contratoInfo of liquidacion.contratos) {
       const contrato = await Contrato.findById(contratoInfo.contrato);
       if (contrato) {
-        const participante = contrato.participantes.find(
-          p => p.empleado.toString() === liquidacion.empleado.toString()
-        );
+        // Usar participanteId si está disponible (nuevas liquidaciones)
+        // Si no, buscar por empleado (compatibilidad con liquidaciones antiguas)
+        let participante;
+        if (contratoInfo.participanteId) {
+          participante = contrato.participantes.id(contratoInfo.participanteId);
+        } else {
+          // Fallback para liquidaciones antiguas sin participanteId
+          participante = contrato.participantes.find(
+            p => p.empleado.toString() === liquidacion.empleado.toString()
+          );
+        }
+        
         if (participante) {
           participante.estadoComision = 'pendiente';
           participante.fechaPago = null;

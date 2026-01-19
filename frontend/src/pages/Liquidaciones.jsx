@@ -216,12 +216,13 @@ export default function Liquidaciones() {
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Contrato</th>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo Comisión</th>
                           <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Monto</th>
                           <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Comisión</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {emp.contratos.map((c, idx) => (
+                        {(emp.comisiones || emp.contratos || []).map((c, idx) => (
                           <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
                             <td className="px-4 py-3">
                               <Link to={`/contratos/${c.contratoId}`} className="font-medium text-blue-600 hover:underline">
@@ -229,6 +230,11 @@ export default function Liquidaciones() {
                               </Link>
                             </td>
                             <td className="px-4 py-3 text-gray-600">{c.cliente}</td>
+                            <td className="px-4 py-3">
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                                {c.tipoComisionNombre || 'Comisión'}
+                              </span>
+                            </td>
                             <td className="px-4 py-3 text-right font-medium">{formatCurrency(c.montoContrato)}</td>
                             <td className="px-4 py-3 text-right font-bold text-green-600">{formatCurrency(c.comision)}</td>
                           </tr>
@@ -403,7 +409,7 @@ export default function Liquidaciones() {
                 <span className="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                   <DocumentArrowDownIcon className="w-4 h-4 text-white" />
                 </span>
-                Contratos Incluidos
+                Comisiones Incluidas
               </h4>
               <div className="overflow-x-auto rounded-xl border border-gray-100">
                 <table className="w-full text-sm">
@@ -411,6 +417,7 @@ export default function Liquidaciones() {
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Contrato</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Cliente</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Tipo</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600">Monto</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600">Comisión</th>
                     </tr>
@@ -420,6 +427,11 @@ export default function Liquidaciones() {
                       <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
                         <td className="px-4 py-3 font-medium text-blue-600">{c.codigoContrato}</td>
                         <td className="px-4 py-3 text-gray-600">{c.cliente}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                            {c.tipoComisionNombre || 'Comisión'}
+                          </span>
+                        </td>
                         <td className="px-4 py-3 text-right">{formatCurrency(c.montoContrato)}</td>
                         <td className="px-4 py-3 text-right font-semibold text-green-600">{formatCurrency(c.comisionPagada)}</td>
                       </tr>
@@ -427,7 +439,7 @@ export default function Liquidaciones() {
                   </tbody>
                   <tfoot className="bg-gradient-to-r from-green-50 to-green-100/50">
                     <tr>
-                      <td colSpan="3" className="px-4 py-3 text-right font-bold text-gray-700">Total:</td>
+                      <td colSpan="4" className="px-4 py-3 text-right font-bold text-gray-700">Total:</td>
                       <td className="px-4 py-3 text-right font-bold text-xl text-green-600">
                         {formatCurrency(modalDetalle.totalComision)}
                       </td>

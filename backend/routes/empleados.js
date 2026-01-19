@@ -39,6 +39,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET - Obtener comisiones de un empleado
+// Ahora maneja múltiples comisiones por contrato para el mismo empleado
 router.get('/:id/comisiones', async (req, res) => {
   try {
     const contratos = await Contrato.find({
@@ -51,13 +52,15 @@ router.get('/:id/comisiones', async (req, res) => {
     let totalPendiente = 0;
     
     contratos.forEach(contrato => {
-      const participante = contrato.participantes.find(
+      // Buscar TODAS las participaciones del empleado en este contrato (puede haber múltiples)
+      const participaciones = contrato.participantes.filter(
         p => p.empleado._id.toString() === req.params.id
       );
       
-      if (participante) {
+      participaciones.forEach(participante => {
         const comisionData = {
           contratoId: contrato._id,
+          participanteId: participante._id,
           codigoContrato: contrato.codigo,
           cliente: contrato.cliente.nombre,
           montoContrato: contrato.montoTotal,
@@ -65,6 +68,7 @@ router.get('/:id/comisiones', async (req, res) => {
           estadoContrato: contrato.estado,
           tipoComision: participante.comision.tipo,
           valorComision: participante.comision.valor,
+          tipoComisionNombre: participante.tipoComisionNombre || 'Comisión Base',
           comisionEstimada: participante.comisionEstimada,
           comisionCalculada: participante.comisionCalculada,
           estadoComision: participante.estadoComision,
@@ -81,7 +85,7 @@ router.get('/:id/comisiones', async (req, res) => {
             totalPendiente += participante.comisionCalculada;
           }
         }
-      }
+      });
     });
     
     res.json({
