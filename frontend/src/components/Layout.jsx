@@ -61,7 +61,7 @@ function Logo({ compact = false }) {
             <span className="text-blue-400">Tecno</span>
             <span className="text-white"> Rewards</span>
           </span>
-          <span className="text-[10px] text-gray-400 tracking-wider">COMISIONES & BONOS</span>
+          <span className="text-[10px] text-gray-400 tracking-wider">BONIFICACIONES & BONOS</span>
         </div>
       )}
     </motion.div>

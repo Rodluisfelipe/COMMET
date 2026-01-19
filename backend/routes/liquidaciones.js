@@ -160,7 +160,7 @@ router.post('/', async (req, res) => {
     }
     
     if (contratosParaLiquidar.length === 0) {
-      return res.status(400).json({ mensaje: 'No hay comisiones pendientes para liquidar' });
+      return res.status(400).json({ mensaje: 'No hay bonificaciones pendientes para liquidar' });
     }
     
     // Crear la liquidación
@@ -188,7 +188,7 @@ router.post('/', async (req, res) => {
     
     res.status(201).json(liquidacion);
   } catch (error) {
-    res.status(400).json({ mensaje: 'Error al crear liquidación', error: error.message });
+    res.status(400).json({ mensaje: 'Error al crear bonificación', error: error.message });
   }
 });
 
@@ -392,7 +392,7 @@ router.get('/:id/comprobante', async (req, res) => {
     
     doc.fontSize(18)
        .font('Helvetica-Bold')
-       .text('COMPROBANTE DE LIQUIDACIÓN', leftMargin, currentY + 15, { align: 'center' });
+       .text('COMPROBANTE DE BONIFICACIÓN', leftMargin, currentY + 15, { align: 'center' });
     
     // Línea decorativa inferior
     doc.moveTo(leftMargin, currentY + 45).lineTo(leftMargin + pageWidth, currentY + 45).lineWidth(1).stroke('#cccccc');
@@ -504,7 +504,7 @@ router.get('/:id/comprobante', async (req, res) => {
       });
       
       // Tipo de comisión
-      doc.text(c.tipoComisionNombre || 'Comisión', col4, tableY + 9, { width: 100 });
+      doc.text(c.tipoComisionNombre || 'Bonificación', col4, tableY + 9, { width: 100 });
       
       doc.text(`$ ${c.montoContrato.toLocaleString('es-CO')}`, col5, tableY + 9, { width: 90 });
       doc.font('Helvetica-Bold').text(`$ ${c.comisionPagada.toLocaleString('es-CO')}`, col6, tableY + 9, { width: 90 });
@@ -520,7 +520,7 @@ router.get('/:id/comprobante', async (req, res) => {
     doc.rect(leftMargin + pageWidth - 180, totalY, 180, 35).fill('#1a1a1a');
     
     doc.fontSize(10).font('Helvetica-Bold').fillColor('#ffffff')
-       .text('TOTAL LIQUIDADO:', leftMargin + pageWidth - 170, totalY + 5);
+       .text('TOTAL BONIFICADO:', leftMargin + pageWidth - 170, totalY + 5);
     doc.fontSize(16).font('Helvetica-Bold')
        .text(`$ ${liquidacion.totalComision.toLocaleString('es-CO')}`, leftMargin + pageWidth - 170, totalY + 17);
     
@@ -589,7 +589,7 @@ router.get('/:id/comprobante', async (req, res) => {
     doc.rect(0, footerY, doc.page.width, 40).fill('#1a1a1a');
     
     doc.fontSize(8).font('Helvetica').fillColor('#ffffff')
-       .text('Este documento es un comprobante oficial de liquidación de comisiones.', leftMargin, footerY + 8, { align: 'center' });
+       .text('Este documento es un comprobante oficial de liquidación de Bonificaciones.', leftMargin, footerY + 8, { align: 'center' });
     doc.fontSize(7).fillColor('#999999')
        .text(`Generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}`, leftMargin, footerY + 20, { align: 'center' });
     
