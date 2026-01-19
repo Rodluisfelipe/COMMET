@@ -122,7 +122,7 @@ export default function Liquidaciones() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Liquidaciones
           </h1>
-          <p className="text-gray-500">Gestiona el pago de comisiones a empleados</p>
+          <p className="text-gray-500">Gestiona el pago de bonificaciones a empleados</p>
         </div>
         <CanEdit>
           <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
@@ -216,9 +216,9 @@ export default function Liquidaciones() {
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Contrato</th>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo Comisión</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo Bonificación</th>
                           <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Monto</th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Comisión</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Bonificación</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
@@ -232,7 +232,7 @@ export default function Liquidaciones() {
                             <td className="px-4 py-3 text-gray-600">{c.cliente}</td>
                             <td className="px-4 py-3">
                               <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                                {c.tipoComisionNombre || 'Comisión'}
+                                {c.tipoComisionNombre || 'Bonificación'}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-right font-medium">{formatCurrency(c.montoContrato)}</td>
@@ -251,7 +251,7 @@ export default function Liquidaciones() {
                           className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300 font-medium"
                         >
                           <BanknotesIcon className="w-5 h-5" />
-                          Liquidar Comisiones
+                          Liquidar Bonificaciones
                         </Link>
                       </motion.div>
                     </div>
@@ -262,8 +262,8 @@ export default function Liquidaciones() {
               <motion.div variants={itemVariants}>
                 <EmptyState
                   icon={BanknotesIcon}
-                  title="No hay comisiones pendientes"
-                  description="Las comisiones aparecerán cuando los contratos estén en estado 'Pagado'"
+                  title="No hay bonificaciones pendientes"
+                  description="Las bonificaciones aparecerán cuando los contratos estén en estado 'Pagado'"
                 />
               </motion.div>
             )}

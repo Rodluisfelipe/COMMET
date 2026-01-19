@@ -50,7 +50,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, scale: 1 }
 };
 
-export default function TiposComision() {
+export default function TiposBonificacion() {
   const { canEdit } = useAuth();
   const [tipos, setTipos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,7 +76,7 @@ export default function TiposComision() {
       const { data } = await api.get('/tipos-comision');
       setTipos(data);
     } catch (error) {
-      toast.error('Error al cargar tipos de comisión');
+      toast.error('Error al cargar tipos de bonificación');
     } finally {
       setLoading(false);
     }
@@ -101,10 +101,10 @@ export default function TiposComision() {
     try {
       if (editando) {
         await api.put(`/tipos-comision/${editando._id}`, formData);
-        toast.success('✨ Tipo de comisión actualizado');
+        toast.success('✨ Tipo de bonificación actualizado');
       } else {
         await api.post('/tipos-comision', formData);
-        toast.success('🎉 Tipo de comisión creado');
+        toast.success('🎉 Tipo de bonificación creado');
       }
       setModalOpen(false);
       resetForm();
@@ -137,7 +137,7 @@ export default function TiposComision() {
     
     try {
       await api.delete(`/tipos-comision/${confirmDelete}`);
-      toast.success('🗑️ Tipo de comisión eliminado');
+      toast.success('🗑️ Tipo de bonificación eliminado');
       cargarTipos();
     } catch (error) {
       toast.error(error.response?.data?.mensaje || 'Error al eliminar');
@@ -197,10 +197,10 @@ export default function TiposComision() {
       >
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Tipos de Comisión
+            Tipos de Bonificación
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            Configura las comisiones predefinidas para tu equipo
+            Configura las bonificaciones predefinidas para tu equipo
           </p>
         </div>
         <CanEdit>
@@ -258,9 +258,9 @@ export default function TiposComision() {
         <motion.div variants={itemVariants}>
           <EmptyState
             icon={TagIcon}
-            title="No hay tipos de comisión"
-            description="Crea tu primer tipo de comisión para usarlo en los contratos"
-            actionLabel="Crear tipo de comisión"
+            title="No hay tipos de bonificación"
+            description="Crea tu primer tipo de bonificación para usarlo en los contratos"
+            actionLabel="Crear tipo de bonificación"
             onAction={() => {
               resetForm();
               setModalOpen(true);
@@ -390,7 +390,7 @@ export default function TiposComision() {
           setModalOpen(false);
           resetForm();
         }}
-        title={editando ? 'Editar Tipo de Comisión' : 'Nuevo Tipo de Comisión'}
+        title={editando ? 'Editar Tipo de Bonificación' : 'Nuevo Tipo de Bonificación'}
         icon={editando ? PencilIcon : SparklesIcon}
         maxWidth="max-w-lg"
       >
@@ -404,7 +404,7 @@ export default function TiposComision() {
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50"
-              placeholder="Ej: Comisión por presentación"
+              placeholder="Ej: Bonificación por presentación"
             />
           </div>
 
@@ -539,8 +539,8 @@ export default function TiposComision() {
         isOpen={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
         onConfirm={confirmarEliminar}
-        title="Eliminar tipo de comisión"
-        message="¿Estás seguro de que deseas eliminar este tipo de comisión? Esta acción no se puede deshacer."
+        title="Eliminar tipo de bonificación"
+        message="¿Estás seguro de que deseas eliminar este tipo de bonificación? Esta acción no se puede deshacer."
         tipo="danger"
         confirmText="Eliminar"
       />

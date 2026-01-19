@@ -11,7 +11,7 @@ import ContratoDetalle from './pages/ContratoDetalle'
 import Liquidaciones from './pages/Liquidaciones'
 import LiquidacionNueva from './pages/LiquidacionNueva'
 import Reportes from './pages/Reportes'
-import TiposComision from './pages/TiposComision'
+import TiposBonificacion from './pages/TiposComision'
 import Empresas from './pages/Empresas'
 
 // Componente para rutas protegidas
@@ -46,7 +46,7 @@ function AppRoutes() {
         <Route path="liquidaciones" element={<Liquidaciones />} />
         <Route path="liquidaciones/nueva" element={<LiquidacionNueva />} />
         <Route path="reportes" element={<Reportes />} />
-        <Route path="tipos-comision" element={<TiposComision />} />
+        <Route path="tipos-comision" element={<TiposBonificacion />} />
         <Route path="empresas" element={<Empresas />} />
       </Route>
     </Routes>

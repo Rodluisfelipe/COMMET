@@ -29,7 +29,7 @@ const navigation = [
   { name: 'Empleados', href: '/empleados', icon: UsersIcon },
   { name: 'Contratos', href: '/contratos', icon: DocumentTextIcon },
   { name: 'Liquidaciones', href: '/liquidaciones', icon: CurrencyDollarIcon },
-  { name: 'Tipos Comisión', href: '/tipos-comision', icon: TagIcon },
+  { name: 'Tipos Bonificación', href: '/tipos-comision', icon: TagIcon },
   { name: 'Reportes', href: '/reportes', icon: ChartBarIcon },
 ]
 

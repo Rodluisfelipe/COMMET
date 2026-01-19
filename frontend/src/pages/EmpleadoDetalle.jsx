@@ -157,7 +157,7 @@ export default function EmpleadoDetalle() {
               <p className="font-medium">{empleado.telefono || '-'}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Comisión Base</p>
+              <p className="text-sm text-gray-500">Bonificación Base</p>
               <p className="font-medium text-accent-600">
                 {empleado.comisionBase?.tipo === 'porcentaje'
                   ? formatPercentage(empleado.comisionBase.valor)
@@ -178,7 +178,7 @@ export default function EmpleadoDetalle() {
         >
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <SparklesIcon className="w-5 h-5 text-blue-500" />
-            Historial de Comisiones
+            Historial de Bonificaciones
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -188,7 +188,7 @@ export default function EmpleadoDetalle() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cliente</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tipo</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Monto</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Comisión</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Bonificación</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
@@ -217,7 +217,7 @@ export default function EmpleadoDetalle() {
                         <td className="px-4 py-3 text-sm text-gray-600">{c.cliente}</td>
                         <td className="px-4 py-3">
                           <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                            {c.tipoComisionNombre || 'Comisión'}
+                            {c.tipoComisionNombre || 'Bonificación'}
                           </span>
                           <p className="text-xs text-gray-400 mt-1">
                             {c.tipoComision === 'porcentaje' ? `${c.valorComision}%` : formatCurrency(c.valorComision)}
@@ -241,7 +241,7 @@ export default function EmpleadoDetalle() {
                     <tr>
                       <td colSpan="6" className="px-4 py-12 text-center">
                         <DocumentTextIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500">No hay comisiones registradas</p>
+                        <p className="text-gray-500">No hay bonificaciones registradas</p>
                       </td>
                     </tr>
                   )}

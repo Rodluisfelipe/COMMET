@@ -277,7 +277,7 @@ export default function Dashboard() {
                   <CheckCircleIcon className="w-12 h-12 text-green-500" />
                 </motion.div>
                 <p className="text-gray-600 font-medium mt-2">¡Todo al día!</p>
-                <p className="text-xs text-gray-400">No hay comisiones pendientes</p>
+                <p className="text-xs text-gray-400">No hay bonificaciones pendientes</p>
               </div>
             )}
           </div>
@@ -296,7 +296,7 @@ export default function Dashboard() {
         {[
           { title: 'Nuevo Contrato', desc: 'Registrar venta', icon: DocumentTextIcon, link: '/contratos', color: 'blue' },
           { title: 'Nuevo Empleado', desc: 'Agregar personal', icon: UsersIcon, link: '/empleados', color: 'indigo' },
-          { title: 'Tipos Comisión', desc: 'Configurar tipos', icon: ChartBarIcon, link: '/tipos-comision', color: 'purple' },
+          { title: 'Tipos Bonificación', desc: 'Configurar tipos', icon: ChartBarIcon, link: '/tipos-comision', color: 'purple' },
           { title: 'Reportes', desc: 'Ver estadísticas', icon: BanknotesIcon, link: '/reportes', color: 'green' }
         ].map((acc, idx) => (
           <Link key={idx} to={acc.link}>

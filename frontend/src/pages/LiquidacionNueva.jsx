@@ -168,7 +168,7 @@ export default function LiquidacionNueva() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Nueva Liquidación
           </h1>
-          <p className="text-gray-500">Pago de comisiones a empleados</p>
+          <p className="text-gray-500">Pago de bonificaciones a empleados</p>
         </div>
       </motion.div>
       
@@ -178,7 +178,7 @@ export default function LiquidacionNueva() {
           className="glass rounded-2xl p-10 text-center"
         >
           <CurrencyDollarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg mb-3">No hay comisiones pendientes de liquidar</p>
+          <p className="text-gray-500 text-lg mb-3">No hay bonificaciones pendientes de liquidar</p>
           <Link 
             to="/contratos" 
             className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium"
@@ -237,7 +237,7 @@ export default function LiquidacionNueva() {
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">2</div>
                     <DocumentTextIcon className="w-5 h-5 text-green-500" />
-                    Seleccionar Comisiones a Liquidar
+                    Seleccionar Bonificaciones a Liquidar
                   </h2>
                   <motion.button
                     type="button"
@@ -279,7 +279,7 @@ export default function LiquidacionNueva() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-gray-900">{c.codigo}</p>
                             <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                              {c.tipoComisionNombre || 'Comisión'}
+                              {c.tipoComisionNombre || 'Bonificación'}
                             </span>
                           </div>
                           <p className="text-sm text-gray-500">{c.cliente}</p>
@@ -292,7 +292,7 @@ export default function LiquidacionNueva() {
                           <p className="font-medium text-gray-700">{formatCurrency(c.montoContrato)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-gray-400">Comisión</p>
+                          <p className="text-xs text-gray-400">Bonificación</p>
                           <p className="font-bold text-blue-600">{formatCurrency(c.comision)}</p>
                         </div>
                       </motion.label>

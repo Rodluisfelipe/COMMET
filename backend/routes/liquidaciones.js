@@ -137,7 +137,7 @@ router.post('/', async (req, res) => {
         comisionPagada: participante.comisionCalculada,
         tipoComision: participante.comision.tipo,
         valorComision: participante.comision.valor,
-        tipoComisionNombre: participante.tipoComisionNombre || 'Comisión Base'
+        tipoComisionNombre: participante.tipoComisionNombre || 'Bonificación Base'
       });
       
       totalComision += participante.comisionCalculada;
@@ -152,7 +152,7 @@ router.post('/', async (req, res) => {
         contrato.estado = 'liquidado';
         contrato.historialEstados.push({
           estado: 'liquidado',
-          observacion: 'Todas las comisiones liquidadas'
+          observacion: 'Todas las bonificaciones liquidadas'
         });
       }
       
@@ -458,13 +458,13 @@ router.get('/:id/comprobante', async (req, res) => {
     // Línea separadora
     doc.moveTo(leftMargin, beneficiarioContentY + 35).lineTo(leftMargin + pageWidth, beneficiarioContentY + 35).lineWidth(0.5).stroke('#e0e0e0');
     
-    // ============ DETALLE DE COMISIONES ============
+    // ============ DETALLE DE BONIFICACIONES ============
     const detalleY = beneficiarioContentY + 50;
     
     // Título de sección
     doc.rect(leftMargin, detalleY, pageWidth, 25).fill('#f5f5f5');
     doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a1a1a')
-       .text('DETALLE DE COMISIONES', leftMargin + 15, detalleY + 7);
+       .text('DETALLE DE BONIFICACIONES', leftMargin + 15, detalleY + 7);
     
     // Encabezados de la tabla
     const tableHeaderY = detalleY + 35;
@@ -484,7 +484,7 @@ router.get('/:id/comprobante', async (req, res) => {
     doc.text('CLIENTE', col3, tableHeaderY + 6);
     doc.text('TIPO', col4, tableHeaderY + 6);
     doc.text('MONTO', col5, tableHeaderY + 6);
-    doc.text('COMISIÓN', col6, tableHeaderY + 6);
+    doc.text('BONIF.', col6, tableHeaderY + 6);
     
     // Filas de la tabla
     let tableY = tableHeaderY + 20;

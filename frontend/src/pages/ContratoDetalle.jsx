@@ -112,7 +112,7 @@ export default function ContratoDetalle() {
       }
       
       await api.post(`/contratos/${id}/participantes`, payload)
-      toast.success('Comisión agregada')
+      toast.success('Bonificación agregada')
       setModalParticipante(false)
       setFormParticipante({ 
         empleadoId: '', 
@@ -123,7 +123,7 @@ export default function ContratoDetalle() {
       })
       fetchData()
     } catch (error) {
-      toast.error(error.response?.data?.mensaje || 'Error al agregar comisión')
+      toast.error(error.response?.data?.mensaje || 'Error al agregar bonificación')
     } finally {
       setGuardando(false)
     }
@@ -138,7 +138,7 @@ export default function ContratoDetalle() {
     
     try {
       await api.delete(`/contratos/${id}/participantes/${confirmDelete}`)
-      toast.success('🗑️ Comisión eliminada')
+      toast.success('🗑️ Bonificación eliminada')
       fetchData()
     } catch (error) {
       toast.error(error.response?.data?.mensaje || 'Error al eliminar')
@@ -201,7 +201,7 @@ export default function ContratoDetalle() {
       await api.put(`/contratos/${id}`, {
         deducciones: parseFloat(formDeducciones) || 0
       })
-      toast.success('💰 Deducciones actualizadas - Comisiones recalculadas')
+      toast.success('💰 Deducciones actualizadas - Bonificaciones recalculadas')
       setModalDeducciones(false)
       fetchData()
     } catch (error) {
@@ -223,7 +223,7 @@ export default function ContratoDetalle() {
         { estado: 'cancelado', label: 'Cancelar', icon: XCircleIcon, color: 'btn-danger' }
       ],
       pagado: [
-        { estado: 'liquidado', label: 'Liquidar Comisiones', icon: BanknotesIcon, color: 'btn-success' }
+        { estado: 'liquidado', label: 'Liquidar Bonificaciones', icon: BanknotesIcon, color: 'btn-success' }
       ],
       liquidado: [],
       cancelado: []
@@ -361,7 +361,7 @@ export default function ContratoDetalle() {
           <div>
             <p className="text-xs text-green-700 font-medium">Monto Neto</p>
             <p className="text-xl font-bold text-green-600">{formatCurrency(contrato.montoNeto || (contrato.montoTotal - (contrato.deducciones || 0)))}</p>
-            <p className="text-[10px] text-green-500">Base para comisiones</p>
+            <p className="text-[10px] text-green-500">Base para bonificaciones</p>
           </div>
         </motion.div>
         
@@ -404,7 +404,7 @@ export default function ContratoDetalle() {
             <SparklesIcon className="w-6 h-6 text-white" />
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-medium">Total Comisiones</p>
+            <p className="text-xs text-gray-500 font-medium">Total Bonificaciones</p>
             <p className="text-xl font-bold text-blue-600">{formatCurrency(contrato.totalComisiones)}</p>
           </div>
         </motion.div>
@@ -463,7 +463,7 @@ export default function ContratoDetalle() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <UserGroupIcon className="w-5 h-5 text-blue-500" />
-              Participantes y Comisiones
+              Participantes y Bonificaciones
             </h2>
             {canEdit && contrato.estado !== 'liquidado' && contrato.estado !== 'cancelado' && (
               <motion.button
@@ -473,7 +473,7 @@ export default function ContratoDetalle() {
                 className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-medium shadow-lg shadow-blue-500/25"
               >
                 <PlusIcon className="w-4 h-4" />
-                Agregar Comisión
+                Agregar Bonificación
               </motion.button>
             )}
           </div>
@@ -484,7 +484,7 @@ export default function ContratoDetalle() {
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Empleado</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Comisión</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Bonificación</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Estimada</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Calculada</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</th>
@@ -569,7 +569,7 @@ export default function ContratoDetalle() {
             >
               <p className="text-sm text-yellow-800 flex items-center gap-2">
                 <span className="text-lg">⚠️</span>
-                Las comisiones solo se calculan cuando el contrato está <strong>Pagado</strong>.
+                Las bonificaciones solo se calculan cuando el contrato está <strong>Pagado</strong>.
                 Actualmente se muestran estimaciones.
               </p>
             </motion.div>
@@ -649,19 +649,19 @@ export default function ContratoDetalle() {
         </div>
       </motion.div>
       
-      {/* Modal Agregar Comisión a Participante */}
+      {/* Modal Agregar Bonificación a Participante */}
       <Modal
         isOpen={modalParticipante}
         onClose={() => setModalParticipante(false)}
-        title="Agregar Comisión"
+        title="Agregar Bonificación"
         icon={UserGroupIcon}
         maxWidth="max-w-lg"
       >
         <form onSubmit={handleAgregarParticipante} className="space-y-4">
           <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 mb-2">
             <p className="text-sm text-blue-800">
-              💡 <strong>Tip:</strong> Puedes agregar múltiples tipos de comisión al mismo empleado. 
-              Por ejemplo: comisión por presentación + comisión por ganado.
+              💡 <strong>Tip:</strong> Puedes agregar múltiples tipos de bonificación al mismo empleado. 
+              Por ejemplo: bonificación por presentación + bonificación por ganado.
             </p>
           </div>
           
@@ -683,14 +683,14 @@ export default function ContratoDetalle() {
             </select>
           </div>
           
-          {/* Opciones de comisión */}
+          {/* Opciones de bonificación */}
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">Tipo de Comisión *</label>
+            <label className="block text-sm font-medium text-gray-700">Tipo de Bonificación *</label>
             
             {/* Tipos predefinidos */}
             {tiposComision.filter(tc => tc.aplicaA?.includes(contrato?.tipo)).length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Comisiones Predefinidas</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Bonificaciones Predefinidas</p>
                 <div className="grid gap-2">
                   {tiposComision
                     .filter(tc => tc.aplicaA?.includes(contrato?.tipo))
@@ -759,8 +759,8 @@ export default function ContratoDetalle() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Usar comisión base del empleado</p>
-                  <p className="text-xs text-gray-500">Se usará la comisión configurada en el perfil del empleado</p>
+                  <p className="font-medium text-gray-900">Usar bonificación base del empleado</p>
+                  <p className="text-xs text-gray-500">Se usará la bonificación configurada en el perfil del empleado</p>
                 </div>
               </label>
               
@@ -784,14 +784,14 @@ export default function ContratoDetalle() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Comisión personalizada</p>
-                  <p className="text-xs text-gray-500">Definir una comisión específica para este contrato</p>
+                  <p className="font-medium text-gray-900">Bonificación personalizada</p>
+                  <p className="text-xs text-gray-500">Definir una bonificación específica para este contrato</p>
                 </div>
               </label>
             </div>
           </div>
           
-          {/* Campos para comisión personalizada */}
+          {/* Campos para bonificación personalizada */}
           {formParticipante.comisionPersonalizada && (
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
               <div>
@@ -961,7 +961,7 @@ export default function ContratoDetalle() {
           <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
             <p className="text-sm text-blue-800">
               Las deducciones se restan del monto total para calcular el <strong>monto neto</strong>, 
-              que es la base sobre la cual se calculan las comisiones.
+              que es la base sobre la cual se calculan las bonificaciones.
             </p>
           </div>
           
@@ -989,7 +989,7 @@ export default function ContratoDetalle() {
           
           <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
             <div className="flex justify-between items-center">
-              <span className="font-medium text-green-800">Monto Neto (Base Comisiones):</span>
+              <span className="font-medium text-green-800">Monto Neto (Base Bonificaciones):</span>
               <span className="text-2xl font-bold text-green-600">
                 {formatCurrency(contrato.montoTotal - (parseFloat(formDeducciones) || 0))}
               </span>
@@ -1007,13 +1007,13 @@ export default function ContratoDetalle() {
         </form>
       </Modal>
       
-      {/* ConfirmDialog para eliminar comisión */}
+      {/* ConfirmDialog para eliminar bonificación */}
       <ConfirmDialog
         isOpen={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
         onConfirm={confirmarEliminarParticipante}
-        title="Eliminar Comisión"
-        message="¿Está seguro de eliminar esta comisión del contrato? Esta acción no se puede deshacer."
+        title="Eliminar Bonificación"
+        message="¿Está seguro de eliminar esta bonificación del contrato? Esta acción no se puede deshacer."
         confirmText="Eliminar"
         type="danger"
       />

@@ -177,7 +177,7 @@ export default function Empleados() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Empleados
           </h1>
-          <p className="text-gray-500">Gestiona el personal y sus comisiones base</p>
+          <p className="text-gray-500">Gestiona el personal y sus bonificaciones base</p>
         </div>
         <CanEdit>
           <motion.button 
@@ -249,7 +249,7 @@ export default function Empleados() {
                     Cargo
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Comisión Base
+                    Bonificación Base
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Estado
@@ -447,18 +447,18 @@ export default function Empleados() {
             </div>
           </div>
           
-          {/* Comisión Base */}
+          {/* Bonificación Base */}
           <div className="border-t border-gray-100 pt-5 mt-5">
             <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                 <CurrencyDollarIcon className="w-4 h-4 text-white" />
               </span>
-              Comisión Base (Por defecto)
+              Bonificación Base (Por defecto)
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Tipo de Comisión
+                  Tipo de Bonificación
                 </label>
                 <select
                   name="comisionBase.tipo"
