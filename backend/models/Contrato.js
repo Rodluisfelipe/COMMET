@@ -1,20 +1,23 @@
 const mongoose = require('mongoose');
 
-// Sub-esquema para participantes del contrato
+// Sub-esquema para comisiones de participantes del contrato
+// NOTA: Un empleado puede tener MÚLTIPLES entradas con diferentes tipos de comisión
+// Ejemplo: Empleado X puede tener comisión "Por Presentación" + comisión "Por Ganado"
 const participanteSchema = new mongoose.Schema({
   empleado: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Empleado',
     required: true
   },
-  // Referencia al tipo de comisión predefinido (nuevo)
+  // Referencia al tipo de comisión predefinido
   tipoComision: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TipoComision'
   },
-  // Nombre del tipo de comisión (para historial)
+  // Nombre del tipo de comisión (para historial y visualización)
   tipoComisionNombre: {
-    type: String
+    type: String,
+    required: true
   },
   // Comisión específica para este contrato
   comision: {

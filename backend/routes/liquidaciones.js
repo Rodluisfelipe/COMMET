@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET - Obtener resumen para liquidar (comisiones pendientes por empleado)
+// Ahora cada comisión se lista individualmente (un empleado puede tener varias comisiones por contrato)
 router.get('/pendientes', async (req, res) => {
   try {
     // Buscar contratos pagados con comisiones pendientes
@@ -51,12 +52,13 @@ router.get('/pendientes', async (req, res) => {
           if (!resumenPorEmpleado[empId]) {
             resumenPorEmpleado[empId] = {
               empleado: p.empleado,
-              contratos: [],
+              comisiones: [], // Cambiado de 'contratos' a 'comisiones' para claridad
               totalPendiente: 0
             };
           }
           
-          resumenPorEmpleado[empId].contratos.push({
+          // Cada comisión es una entrada individual (permite múltiples comisiones por contrato/empleado)
+          resumenPorEmpleado[empId].comisiones.push({
             contratoId: contrato._id,
             participanteId: p._id,
             codigo: contrato.codigo,
@@ -65,7 +67,8 @@ router.get('/pendientes', async (req, res) => {
             montoContrato: contrato.montoTotal,
             comision: p.comisionCalculada,
             tipoComision: p.comision.tipo,
-            valorComision: p.comision.valor
+            valorComision: p.comision.valor,
+            tipoComisionNombre: p.tipoComisionNombre || 'Comisión Base'
           });
           
           resumenPorEmpleado[empId].totalPendiente += p.comisionCalculada;
@@ -132,7 +135,8 @@ router.post('/', async (req, res) => {
         montoContrato: contrato.montoTotal,
         comisionPagada: participante.comisionCalculada,
         tipoComision: participante.comision.tipo,
-        valorComision: participante.comision.valor
+        valorComision: participante.comision.valor,
+        tipoComisionNombre: participante.tipoComisionNombre || 'Comisión Base'
       });
       
       totalComision += participante.comisionCalculada;

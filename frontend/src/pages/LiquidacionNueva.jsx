@@ -61,11 +61,13 @@ export default function LiquidacionNueva() {
       const response = await api.get('/liquidaciones/pendientes')
       setPendientes(response.data)
       
-      // Si hay empleado preseleccionado, seleccionar todos sus contratos
+      // Si hay empleado preseleccionado, seleccionar todas sus comisiones
       if (preselectedEmpleado) {
         const empData = response.data.find(p => p.empleado._id === preselectedEmpleado)
         if (empData) {
-          setContratosSeleccionados(empData.contratos.map(c => ({
+          // Ahora usamos 'comisiones' en lugar de 'contratos'
+          const comisiones = empData.comisiones || empData.contratos || []
+          setContratosSeleccionados(comisiones.map(c => ({
             contratoId: c.contratoId,
             participanteId: c.participanteId
           })))
@@ -79,12 +81,15 @@ export default function LiquidacionNueva() {
   }
   
   const empleadoData = pendientes.find(p => p.empleado._id === empleadoSeleccionado)
+  // Compatibilidad: usar 'comisiones' o 'contratos' (para datos antiguos)
+  const comisionesEmpleado = empleadoData?.comisiones || empleadoData?.contratos || []
   
   const handleToggleContrato = (contratoId, participanteId) => {
     setContratosSeleccionados(prev => {
-      const existe = prev.some(c => c.contratoId === contratoId)
+      // Usar participanteId para identificar cada comisión individual
+      const existe = prev.some(c => c.participanteId === participanteId)
       if (existe) {
-        return prev.filter(c => c.contratoId !== contratoId)
+        return prev.filter(c => c.participanteId !== participanteId)
       } else {
         return [...prev, { contratoId, participanteId }]
       }
@@ -93,18 +98,18 @@ export default function LiquidacionNueva() {
   
   const handleSelectAll = () => {
     if (!empleadoData) return
-    if (contratosSeleccionados.length === empleadoData.contratos.length) {
+    if (contratosSeleccionados.length === comisionesEmpleado.length) {
       setContratosSeleccionados([])
     } else {
-      setContratosSeleccionados(empleadoData.contratos.map(c => ({
+      setContratosSeleccionados(comisionesEmpleado.map(c => ({
         contratoId: c.contratoId,
         participanteId: c.participanteId
       })))
     }
   }
   
-  const totalSeleccionado = empleadoData?.contratos
-    .filter(c => contratosSeleccionados.some(s => s.contratoId === c.contratoId))
+  const totalSeleccionado = comisionesEmpleado
+    .filter(c => contratosSeleccionados.some(s => s.participanteId === c.participanteId))
     .reduce((acc, c) => acc + c.comision, 0) || 0
   
   const handleSubmit = async (e) => {
@@ -197,7 +202,9 @@ export default function LiquidacionNueva() {
                 setEmpleadoSeleccionado(e.target.value)
                 const empData = pendientes.find(p => p.empleado._id === e.target.value)
                 if (empData) {
-                  setContratosSeleccionados(empData.contratos.map(c => ({
+                  // Compatibilidad: usar 'comisiones' o 'contratos'
+                  const comisiones = empData.comisiones || empData.contratos || []
+                  setContratosSeleccionados(comisiones.map(c => ({
                     contratoId: c.contratoId,
                     participanteId: c.participanteId
                   })))
@@ -230,7 +237,7 @@ export default function LiquidacionNueva() {
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">2</div>
                     <DocumentTextIcon className="w-5 h-5 text-green-500" />
-                    Seleccionar Contratos a Liquidar
+                    Seleccionar Comisiones a Liquidar
                   </h2>
                   <motion.button
                     type="button"
@@ -239,19 +246,19 @@ export default function LiquidacionNueva() {
                     onClick={handleSelectAll}
                     className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                   >
-                    {contratosSeleccionados.length === empleadoData.contratos.length
-                      ? 'Deseleccionar todos'
-                      : 'Seleccionar todos'
+                    {contratosSeleccionados.length === comisionesEmpleado.length
+                      ? 'Deseleccionar todas'
+                      : 'Seleccionar todas'
                     }
                   </motion.button>
                 </div>
                 
                 <div className="space-y-3">
-                  {empleadoData.contratos.map((c, index) => {
-                    const isSelected = contratosSeleccionados.some(s => s.contratoId === c.contratoId)
+                  {comisionesEmpleado.map((c, index) => {
+                    const isSelected = contratosSeleccionados.some(s => s.participanteId === c.participanteId)
                     return (
                       <motion.label
-                        key={c.contratoId}
+                        key={c.participanteId}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
@@ -269,7 +276,12 @@ export default function LiquidacionNueva() {
                           className="w-5 h-5 text-blue-600 rounded-lg border-2"
                         />
                         <div className="flex-1">
-                          <p className="font-semibold text-gray-900">{c.codigo}</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-semibold text-gray-900">{c.codigo}</p>
+                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                              {c.tipoComisionNombre || 'Comisión'}
+                            </span>
+                          </div>
                           <p className="text-sm text-gray-500">{c.cliente}</p>
                           {c.empresa && (
                             <p className="text-xs text-blue-600 font-medium mt-1">{c.empresa}</p>

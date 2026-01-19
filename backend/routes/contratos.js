@@ -105,7 +105,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// POST - Agregar participante a contrato
+// POST - Agregar comisión a participante (un empleado puede tener múltiples comisiones)
 router.post('/:id/participantes', async (req, res) => {
   try {
     const contrato = await Contrato.findById(req.params.id);
@@ -120,18 +120,22 @@ router.post('/:id/participantes', async (req, res) => {
     
     const { empleadoId, comision, usaComisionBase, tipoComisionId } = req.body;
     
-    // Verificar si ya existe
-    const existe = contrato.participantes.some(
-      p => p.empleado.toString() === empleadoId
-    );
-    
-    if (existe) {
-      return res.status(400).json({ mensaje: 'El empleado ya está asociado a este contrato' });
+    // Verificar si ya existe esta MISMA combinación de empleado + tipo de comisión
+    if (tipoComisionId) {
+      const existeMismaComision = contrato.participantes.some(
+        p => p.empleado.toString() === empleadoId && 
+             p.tipoComision && 
+             p.tipoComision.toString() === tipoComisionId
+      );
+      
+      if (existeMismaComision) {
+        return res.status(400).json({ mensaje: 'El empleado ya tiene este tipo de comisión asignada' });
+      }
     }
     
     // Determinar comisión final
     let comisionFinal = comision;
-    let tipoComisionNombre = null;
+    let tipoComisionNombre = 'Comisión Base';
     let tipoComisionRef = null;
     
     if (tipoComisionId) {
@@ -154,6 +158,7 @@ router.post('/:id/participantes', async (req, res) => {
         valor: empleado.comisionBase.valor,
         usaTipoPredefinido: false
       };
+      tipoComisionNombre = 'Comisión Base Empleado';
     } else if (comision) {
       // Comisión personalizada
       comisionFinal = {
@@ -161,6 +166,7 @@ router.post('/:id/participantes', async (req, res) => {
         valor: comision.valor,
         usaTipoPredefinido: false
       };
+      tipoComisionNombre = 'Comisión Personalizada';
     }
     
     contrato.participantes.push({
@@ -176,11 +182,11 @@ router.post('/:id/participantes', async (req, res) => {
     
     res.json(contrato);
   } catch (error) {
-    res.status(400).json({ mensaje: 'Error al agregar participante', error: error.message });
+    res.status(400).json({ mensaje: 'Error al agregar comisión', error: error.message });
   }
 });
 
-// DELETE - Eliminar participante de contrato
+// DELETE - Eliminar comisión de participante
 router.delete('/:id/participantes/:participanteId', async (req, res) => {
   try {
     const contrato = await Contrato.findById(req.params.id);
@@ -195,8 +201,12 @@ router.delete('/:id/participantes/:participanteId', async (req, res) => {
     
     const participante = contrato.participantes.id(req.params.participanteId);
     
-    if (participante && participante.estadoComision === 'pagada') {
-      return res.status(400).json({ mensaje: 'No se puede eliminar un participante con comisión pagada' });
+    if (!participante) {
+      return res.status(404).json({ mensaje: 'Comisión no encontrada' });
+    }
+    
+    if (participante.estadoComision === 'pagada') {
+      return res.status(400).json({ mensaje: 'No se puede eliminar una comisión ya pagada' });
     }
     
     contrato.participantes.pull(req.params.participanteId);
@@ -205,7 +215,49 @@ router.delete('/:id/participantes/:participanteId', async (req, res) => {
     
     res.json(contrato);
   } catch (error) {
-    res.status(400).json({ mensaje: 'Error al eliminar participante', error: error.message });
+    res.status(400).json({ mensaje: 'Error al eliminar comisión', error: error.message });
+  }
+});
+
+// DELETE - Eliminar TODAS las comisiones de un empleado específico (solo las no pagadas)
+router.delete('/:id/participantes/empleado/:empleadoId', async (req, res) => {
+  try {
+    const contrato = await Contrato.findById(req.params.id);
+    
+    if (!contrato) {
+      return res.status(404).json({ mensaje: 'Contrato no encontrado' });
+    }
+    
+    if (contrato.estado === 'liquidado') {
+      return res.status(400).json({ mensaje: 'No se puede modificar un contrato liquidado' });
+    }
+    
+    const empleadoId = req.params.empleadoId;
+    
+    // Filtrar comisiones del empleado que no estén pagadas
+    const comisionesAEliminar = contrato.participantes.filter(
+      p => p.empleado.toString() === empleadoId && p.estadoComision !== 'pagada'
+    );
+    
+    if (comisionesAEliminar.length === 0) {
+      return res.status(400).json({ mensaje: 'No hay comisiones pendientes para eliminar de este empleado' });
+    }
+    
+    // Eliminar cada comisión
+    comisionesAEliminar.forEach(p => {
+      contrato.participantes.pull(p._id);
+    });
+    
+    contrato.calcularComisiones();
+    await contrato.save();
+    await contrato.populate('participantes.empleado', 'nombreCompleto codigoInterno');
+    
+    res.json({ 
+      mensaje: `Se eliminaron ${comisionesAEliminar.length} comisión(es) del empleado`,
+      contrato 
+    });
+  } catch (error) {
+    res.status(400).json({ mensaje: 'Error al eliminar comisiones', error: error.message });
   }
 });
 

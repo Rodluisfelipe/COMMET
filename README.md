@@ -1,4 +1,4 @@
-# 🚀 COMMETP - Sistema de Gestión de Comisiones y Liquidaciones
+# 🚀 tECNO REWARDS - Sistema de Gestión de Comisiones y Liquidaciones
 
 Sistema completo para el control de comisiones de empleados, gestión de contratos y liquidaciones.
 
@@ -17,7 +17,7 @@ Sistema completo para el control de comisiones de empleados, gestión de contrat
 
 - **Backend**: Node.js + Express + MongoDB
 - **Frontend**: React + Vite + Tailwind CSS
-- **Colores**: Azul (#1e40af) + Naranja (#f97316) + Blanco
+- **Colores**: Azul (#1e40af)  + Blanco
 
 ## 📦 Instalación
 
@@ -39,7 +39,7 @@ Editar el archivo `backend/.env`:
 ```env
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/commetp
-JWT_SECRET=tu_secret_key_segura
+JWT_SECRET=xxxx-xxxxx-xxxxx
 NODE_ENV=development
 ```
 
@@ -77,7 +77,7 @@ npm run dev
 - **Backend API**: http://localhost:5000/api
 
 ### Credenciales Demo
-- **Email**: admin@commetp.com
+- **Email**: admin@commetp.com (se reemplazo por google auth)
 - **Password**: admin123
 
 ## 📁 Estructura del Proyecto
@@ -199,4 +199,4 @@ COMMET/
 
 ## 📝 Licencia
 
-MIT License - © 2024 COMMETP
+MIT License - © 2025 COMMETP

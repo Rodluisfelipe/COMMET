@@ -11,7 +11,7 @@ const liquidacionSchema = new mongoose.Schema({
     ref: 'Empleado',
     required: true
   },
-  // Contratos incluidos en esta liquidación
+  // Contratos/Comisiones incluidos en esta liquidación
   contratos: [{
     contrato: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +22,8 @@ const liquidacionSchema = new mongoose.Schema({
     montoContrato: Number,
     comisionPagada: Number,
     tipoComision: String,
-    valorComision: Number
+    valorComision: Number,
+    tipoComisionNombre: String  // Nombre descriptivo del tipo de comisión
   }],
   // Totales
   totalComision: {

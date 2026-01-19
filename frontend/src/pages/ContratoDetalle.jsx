@@ -112,7 +112,7 @@ export default function ContratoDetalle() {
       }
       
       await api.post(`/contratos/${id}/participantes`, payload)
-      toast.success('Participante agregado')
+      toast.success('Comisión agregada')
       setModalParticipante(false)
       setFormParticipante({ 
         empleadoId: '', 
@@ -123,7 +123,7 @@ export default function ContratoDetalle() {
       })
       fetchData()
     } catch (error) {
-      toast.error(error.response?.data?.mensaje || 'Error al agregar participante')
+      toast.error(error.response?.data?.mensaje || 'Error al agregar comisión')
     } finally {
       setGuardando(false)
     }
@@ -138,7 +138,7 @@ export default function ContratoDetalle() {
     
     try {
       await api.delete(`/contratos/${id}/participantes/${confirmDelete}`)
-      toast.success('🗑️ Participante eliminado')
+      toast.success('🗑️ Comisión eliminada')
       fetchData()
     } catch (error) {
       toast.error(error.response?.data?.mensaje || 'Error al eliminar')
@@ -473,7 +473,7 @@ export default function ContratoDetalle() {
                 className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-medium shadow-lg shadow-blue-500/25"
               >
                 <PlusIcon className="w-4 h-4" />
-                Agregar
+                Agregar Comisión
               </motion.button>
             )}
           </div>
@@ -649,15 +649,22 @@ export default function ContratoDetalle() {
         </div>
       </motion.div>
       
-      {/* Modal Agregar Participante */}
+      {/* Modal Agregar Comisión a Participante */}
       <Modal
         isOpen={modalParticipante}
         onClose={() => setModalParticipante(false)}
-        title="Agregar Participante"
+        title="Agregar Comisión"
         icon={UserGroupIcon}
         maxWidth="max-w-lg"
       >
         <form onSubmit={handleAgregarParticipante} className="space-y-4">
+          <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 mb-2">
+            <p className="text-sm text-blue-800">
+              💡 <strong>Tip:</strong> Puedes agregar múltiples tipos de comisión al mismo empleado. 
+              Por ejemplo: comisión por presentación + comisión por ganado.
+            </p>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Empleado *</label>
             <select
@@ -667,9 +674,7 @@ export default function ContratoDetalle() {
               required
             >
               <option value="">Seleccionar empleado</option>
-              {empleados
-                .filter(e => !contrato.participantes?.some(p => p.empleado?._id === e._id))
-                .map(e => (
+              {empleados.map(e => (
                   <option key={e._id} value={e._id}>
                     {e.nombreCompleto} - {e.codigoInterno}
                   </option>
@@ -1002,13 +1007,13 @@ export default function ContratoDetalle() {
         </form>
       </Modal>
       
-      {/* ConfirmDialog para eliminar participante */}
+      {/* ConfirmDialog para eliminar comisión */}
       <ConfirmDialog
         isOpen={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
         onConfirm={confirmarEliminarParticipante}
-        title="Eliminar Participante"
-        message="¿Está seguro de eliminar este participante del contrato? Esta acción no se puede deshacer."
+        title="Eliminar Comisión"
+        message="¿Está seguro de eliminar esta comisión del contrato? Esta acción no se puede deshacer."
         confirmText="Eliminar"
         type="danger"
       />
