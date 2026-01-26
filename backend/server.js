@@ -5,9 +5,25 @@ require('dotenv').config();
 
 const app = express();
 
-// Configuración CORS para producción
+// Configuración CORS para producción - múltiples orígenes permitidos
+const allowedOrigins = [
+  'https://licitronix.com',
+  'https://www.licitronix.com',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como apps móviles o Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -16,9 +32,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Middleware para configurar el encabezado Cross-Origin-Opener-Policy
+// Middleware para configurar headers de seguridad compatibles con Google OAuth
 app.use((req, res, next) => {
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   next();
 });
 
