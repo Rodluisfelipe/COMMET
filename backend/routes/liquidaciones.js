@@ -585,10 +585,10 @@ router.get('/:id/comprobante', async (req, res) => {
        .text(nombreEmpresa, leftMargin + pageWidth - 200, firmasY + 48, { width: 160, align: 'center' });
     
     // ============ PIE DE PÁGINA ============
-    const footerY = firmasY + 60;
+    const footerY = firmasY + 80;
     doc.rect(0, footerY, doc.page.width, 40).fill('#1a1a1a');
     
-    doc.fontSize(6).font('Helvetica').fillColor('#ffffff')
+    doc.fontSize(10).font('Helvetica').fillColor('#ffffff')
        .text('Nota Legal: Acepto que este pago es un acto de mera liberalidad del empleador y, según el Art. 128 del Código Sustantivo del Trabajo, NO constituye salario para ningún efecto legal (ni para prestaciones sociales, ni para seguridad social)..', leftMargin, footerY + 8, { align: 'center' });
     doc.fontSize(7).fillColor('#999999')
        .text(`Generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}`, leftMargin, footerY + 20, { align: 'center' });
