@@ -33,6 +33,7 @@ export default function EmpleadoDetalle() {
   const [empleado, setEmpleado] = useState(null)
   const [comisiones, setComisiones] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [filtroEstado, setFiltroEstado] = useState('todos')
   
   useEffect(() => {
     fetchData()
@@ -176,10 +177,57 @@ export default function EmpleadoDetalle() {
           whileHover={{ y: -2 }}
           className="glass rounded-2xl p-6 lg:col-span-2"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <SparklesIcon className="w-5 h-5 text-blue-500" />
-            Historial de Bonificaciones
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <SparklesIcon className="w-5 h-5 text-blue-500" />
+              Historial de Bonificaciones
+            </h2>
+            
+            {/* Filtro por estado */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setFiltroEstado('todos')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                  filtroEstado === 'todos'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFiltroEstado('pendiente')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                  filtroEstado === 'pendiente'
+                    ? 'bg-yellow-500 text-white'
+                    : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+                }`}
+              >
+                Pendientes
+              </button>
+              <button
+                onClick={() => setFiltroEstado('parcial')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                  filtroEstado === 'parcial'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                }`}
+              >
+                Pago Parcial
+              </button>
+              <button
+                onClick={() => setFiltroEstado('pagada')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                  filtroEstado === 'pagada'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-green-50 text-green-700 hover:bg-green-100'
+                }`}
+              >
+                Pagadas
+              </button>
+            </div>
+          </div>
+          
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
@@ -189,13 +237,19 @@ export default function EmpleadoDetalle() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tipo</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Monto</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Bonificación</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Pagado</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Pendiente</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 <AnimatePresence>
-                  {comisiones?.comisiones?.length > 0 ? (
-                    comisiones.comisiones.map((c, index) => (
+                  {comisiones?.comisiones?.filter(c => 
+                    filtroEstado === 'todos' || c.estadoComision === filtroEstado
+                  ).length > 0 ? (
+                    comisiones.comisiones
+                      .filter(c => filtroEstado === 'todos' || c.estadoComision === filtroEstado)
+                      .map((c, index) => (
                       <motion.tr 
                         key={c.participanteId || index} 
                         initial={{ opacity: 0, x: -20 }}
@@ -232,16 +286,59 @@ export default function EmpleadoDetalle() {
                             }
                           </p>
                         </td>
+                        <td className="px-4 py-3 text-right">
+                          {(c.estadoContrato === 'pagado' || c.estadoContrato === 'liquidado') ? (
+                            <p className={`font-semibold ${c.comisionPagada > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                              {formatCurrency(c.comisionPagada || 0)}
+                            </p>
+                          ) : (
+                            <p className="text-gray-400">-</p>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {(c.estadoContrato === 'pagado' || c.estadoContrato === 'liquidado') ? (
+                            <p className={`font-semibold ${c.comisionPendiente > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
+                              {formatCurrency(c.comisionPendiente || 0)}
+                            </p>
+                          ) : (
+                            <p className="text-gray-400">-</p>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-center">
                           <EstadoBadge estado={c.estadoComision} tipo="comision" />
+                          {/* Mostrar historial de pagos si hay pagos parciales */}
+                          {c.historialPagos && c.historialPagos.length > 0 && c.estadoComision === 'parcial' && (
+                            <div className="mt-2 text-left">
+                              <p className="text-xs font-medium text-gray-500 mb-1">Pagos realizados:</p>
+                              {c.historialPagos.map((hp, idx) => (
+                                <p key={idx} className="text-xs text-gray-400">
+                                  • {new Date(hp.fecha).toLocaleDateString('es-CO')} - {formatCurrency(hp.monto)}
+                                  {hp.liquidacionCodigo && <span className="ml-1 text-blue-500">({hp.liquidacionCodigo})</span>}
+                                </p>
+                              ))}
+                            </div>
+                          )}
                         </td>
                       </motion.tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="px-4 py-12 text-center">
+                      <td colSpan="8" className="px-4 py-12 text-center">
                         <DocumentTextIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500">No hay bonificaciones registradas</p>
+                        <p className="text-gray-500">
+                          {filtroEstado === 'todos' 
+                            ? 'No hay bonificaciones registradas'
+                            : `No hay bonificaciones con estado "${filtroEstado === 'pendiente' ? 'Pendiente' : filtroEstado === 'parcial' ? 'Pago Parcial' : 'Pagada'}"`
+                          }
+                        </p>
+                        {filtroEstado !== 'todos' && (
+                          <button 
+                            onClick={() => setFiltroEstado('todos')}
+                            className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+                          >
+                            Ver todas las bonificaciones
+                          </button>
+                        )}
                       </td>
                     </tr>
                   )}

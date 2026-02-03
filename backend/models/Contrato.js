@@ -45,13 +45,34 @@ const participanteSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  // ===== CAMPOS PARA PAGOS PARCIALES =====
+  // Monto ya pagado de esta comisión (acumulado de liquidaciones parciales)
+  comisionPagada: {
+    type: Number,
+    default: 0
+  },
+  // Saldo pendiente = comisionCalculada - comisionPagada
+  comisionPendiente: {
+    type: Number,
+    default: 0
+  },
   // Estado de la comisión del participante
   estadoComision: {
     type: String,
-    enum: ['pendiente', 'pagada'],
+    enum: ['pendiente', 'parcial', 'pagada'],
     default: 'pendiente'
   },
   fechaPago: Date,
+  // Historial de pagos parciales
+  historialPagos: [{
+    liquidacionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Liquidacion'
+    },
+    liquidacionCodigo: String,
+    monto: Number,
+    fecha: { type: Date, default: Date.now }
+  }],
   liquidacionId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Liquidacion'

@@ -23,10 +23,37 @@ const liquidacionSchema = new mongoose.Schema({
     codigoContrato: String,
     cliente: String,
     montoContrato: Number,
+    // Comisión total del participante
+    comisionTotal: {
+      type: Number,
+      default: 0
+    },
+    // Monto efectivamente pagado en ESTA liquidación (puede ser parcial)
     comisionPagada: Number,
+    // Monto pagado en liquidaciones anteriores
+    comisionPagadaAntes: {
+      type: Number,
+      default: 0
+    },
+    // Saldo pendiente después de este pago
+    saldoPendienteDespues: {
+      type: Number,
+      default: 0
+    },
+    // Indica si es un pago parcial
+    esParcial: {
+      type: Boolean,
+      default: false
+    },
     tipoComision: String,
     valorComision: Number,
-    tipoComisionNombre: String  // Nombre descriptivo del tipo de comisión
+    tipoComisionNombre: String,  // Nombre descriptivo del tipo de comisión
+    // Historial de pagos anteriores a esta liquidación
+    historialPagosPrevios: [{
+      monto: Number,
+      fecha: Date,
+      liquidacionCodigo: String
+    }]
   }],
   // Totales
   totalComision: {

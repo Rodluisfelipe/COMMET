@@ -132,9 +132,8 @@ router.post('/google', async (req, res) => {
     
     if (!usuario) {
       // Crear usuario automáticamente para los correos permitidos
-      // gerencia = superadmin (todos los permisos)
-      // ventas = visor (solo lectura + reiniciar BD)
-      const rol = email.toLowerCase() === 'gerencia@tecnophone.co' ? 'superadmin' : 'visor';
+      // Ambos correos tienen permisos de superadmin
+      const rol = 'superadmin';
       
       usuario = new Usuario({
         nombre: name,
@@ -155,11 +154,9 @@ router.post('/google', async (req, res) => {
       if (!usuario.authProvider) {
         usuario.authProvider = 'google';
       }
-      // Actualizar rol si es necesario
-      if (email.toLowerCase() === 'gerencia@tecnophone.co' && usuario.rol !== 'superadmin') {
+      // Ambos correos autorizados son superadmin
+      if (ALLOWED_GOOGLE_EMAILS.includes(email.toLowerCase()) && usuario.rol !== 'superadmin') {
         usuario.rol = 'superadmin';
-      } else if (email.toLowerCase() === 'ventas@tecnophone.co' && usuario.rol !== 'visor') {
-        usuario.rol = 'visor';
       }
       await usuario.save();
     }

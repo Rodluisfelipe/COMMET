@@ -57,6 +57,13 @@ export default function EstadoBadge({ estado, tipo = 'contrato', animated = fals
         dot: 'bg-yellow-500',
         pulse: true
       },
+      parcial: {
+        bg: 'bg-amber-100',
+        text: 'text-amber-700',
+        ring: 'ring-amber-200',
+        dot: 'bg-amber-500',
+        pulse: true
+      },
       pagada: {
         bg: 'bg-green-100',
         text: 'text-green-700',
@@ -101,6 +108,7 @@ export default function EstadoBadge({ estado, tipo = 'contrato', animated = fals
     },
     comision: {
       pendiente: 'Pendiente',
+      parcial: 'Pago Parcial',
       pagada: 'Pagada'
     },
     liquidacion: {

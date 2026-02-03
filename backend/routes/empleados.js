@@ -58,6 +58,13 @@ router.get('/:id/comisiones', async (req, res) => {
       );
       
       participaciones.forEach(participante => {
+        // Calcular montos de pago parcial
+        const comisionTotal = participante.comisionCalculada || 0;
+        const comisionPagadaReal = participante.comisionPagada || 0;
+        const comisionPendienteReal = participante.comisionPendiente !== undefined 
+          ? participante.comisionPendiente 
+          : (comisionTotal - comisionPagadaReal);
+        
         const comisionData = {
           contratoId: contrato._id,
           participanteId: participante._id,
@@ -71,6 +78,10 @@ router.get('/:id/comisiones', async (req, res) => {
           tipoComisionNombre: participante.tipoComisionNombre || 'Comisión Base',
           comisionEstimada: participante.comisionEstimada,
           comisionCalculada: participante.comisionCalculada,
+          // Datos de pago parcial
+          comisionPagada: comisionPagadaReal,
+          comisionPendiente: comisionPendienteReal,
+          historialPagos: participante.historialPagos || [],
           estadoComision: participante.estadoComision,
           fechaPago: participante.fechaPago
         };
@@ -78,12 +89,9 @@ router.get('/:id/comisiones', async (req, res) => {
         comisiones.push(comisionData);
         
         if (contrato.estado === 'pagado' || contrato.estado === 'liquidado') {
-          totalGenerado += participante.comisionCalculada;
-          if (participante.estadoComision === 'pagada') {
-            totalPagado += participante.comisionCalculada;
-          } else {
-            totalPendiente += participante.comisionCalculada;
-          }
+          totalGenerado += comisionTotal;
+          totalPagado += comisionPagadaReal;
+          totalPendiente += comisionPendienteReal;
         }
       });
     });
