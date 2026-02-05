@@ -5,6 +5,8 @@ import api from '../services/api'
 import { formatCurrency, formatDate, formatPercentage } from '../utils/formatters'
 import EstadoBadge from '../components/EstadoBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import ConfirmDialog from '../components/ConfirmDialog'
+import toast from 'react-hot-toast'
 import { 
   ArrowLeftIcon,
   UserIcon,
@@ -12,7 +14,8 @@ import {
   CheckCircleIcon,
   ClockIcon,
   SparklesIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline'
 
 const containerVariants = {
@@ -34,6 +37,9 @@ export default function EmpleadoDetalle() {
   const [comisiones, setComisiones] = useState(null)
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState('todos')
+  const [showLimpiarDialog, setShowLimpiarDialog] = useState(false)
+  const [resumenPagadas, setResumenPagadas] = useState(null)
+  const [limpiando, setLimpiando] = useState(false)
   
   useEffect(() => {
     fetchData()
@@ -51,6 +57,34 @@ export default function EmpleadoDetalle() {
       console.error('Error:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Obtener resumen de comisiones pagadas antes de mostrar el diálogo
+  const handleShowLimpiarDialog = async () => {
+    try {
+      const response = await api.get(`/empleados/${id}/resumen-pagadas`)
+      setResumenPagadas(response.data)
+      setShowLimpiarDialog(true)
+    } catch (error) {
+      toast.error('Error al obtener información de comisiones pagadas')
+    }
+  }
+
+  // Ejecutar limpieza de registros pagados
+  const handleLimpiarPagadas = async () => {
+    setLimpiando(true)
+    try {
+      const response = await api.delete(`/empleados/${id}/limpiar-pagadas`)
+      toast.success(`✅ ${response.data.mensaje}`)
+      setShowLimpiarDialog(false)
+      setResumenPagadas(null)
+      // Recargar datos
+      fetchData()
+    } catch (error) {
+      toast.error(error.response?.data?.mensaje || 'Error al limpiar registros')
+    } finally {
+      setLimpiando(false)
     }
   }
   
@@ -85,7 +119,20 @@ export default function EmpleadoDetalle() {
           </h1>
           <p className="text-gray-500">{empleado.codigoInterno}</p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          {/* Botón para limpiar comisiones pagadas */}
+          {comisiones?.comisiones?.some(c => c.estadoComision === 'pagada') && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleShowLimpiarDialog}
+              className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 text-sm font-medium rounded-xl hover:bg-red-100 transition-all border border-red-200"
+              title="Limpiar registros de comisiones pagadas"
+            >
+              <TrashIcon className="w-4 h-4" />
+              Limpiar Pagadas
+            </motion.button>
+          )}
           <EstadoBadge estado={empleado.estado} tipo="empleado" />
         </div>
       </motion.div>
@@ -348,6 +395,60 @@ export default function EmpleadoDetalle() {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Diálogo de confirmación para limpiar comisiones pagadas */}
+      <ConfirmDialog
+        isOpen={showLimpiarDialog}
+        onClose={() => {
+          setShowLimpiarDialog(false)
+          setResumenPagadas(null)
+        }}
+        onConfirm={handleLimpiarPagadas}
+        title="Limpiar Registros de Comisiones Pagadas"
+        message={
+          resumenPagadas ? (
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Esta acción eliminará los registros de las comisiones que ya fueron pagadas completamente. 
+                <strong className="text-red-600"> Esta acción no se puede deshacer.</strong>
+              </p>
+              
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Comisiones a eliminar:</span>
+                  <span className="font-semibold">{resumenPagadas.cantidadComisiones}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Liquidaciones asociadas:</span>
+                  <span className="font-semibold">{resumenPagadas.cantidadLiquidaciones}</span>
+                </div>
+                <div className="flex justify-between border-t pt-2">
+                  <span className="text-gray-500">Total pagado a eliminar:</span>
+                  <span className="font-bold text-green-600">{formatCurrency(resumenPagadas.totalPagado)}</span>
+                </div>
+              </div>
+
+              {resumenPagadas.comisiones?.length > 0 && (
+                <div className="max-h-40 overflow-y-auto">
+                  <p className="text-xs text-gray-500 font-medium mb-2">Detalle de comisiones:</p>
+                  {resumenPagadas.comisiones.map((c, idx) => (
+                    <div key={idx} className="text-xs text-gray-600 py-1 border-b border-gray-100 last:border-0">
+                      <span className="font-medium text-blue-600">{c.codigoContrato}</span>
+                      <span className="mx-1">-</span>
+                      <span>{c.cliente}</span>
+                      <span className="mx-1">•</span>
+                      <span className="text-green-600 font-medium">{formatCurrency(c.montoPagado)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : 'Cargando información...'
+        }
+        confirmText={limpiando ? 'Limpiando...' : 'Sí, Limpiar Registros'}
+        cancelText="Cancelar"
+        tipo="danger"
+      />
     </motion.div>
   )
 }

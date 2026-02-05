@@ -191,4 +191,138 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// DELETE - Limpiar registros de comisiones pagadas de un empleado
+// Esto elimina las participaciones con comisiones 100% pagadas de los contratos
+// y las liquidaciones asociadas, para mantener la BD limpia
+router.delete('/:id/limpiar-pagadas', async (req, res) => {
+  try {
+    const Liquidacion = require('../models/Liquidacion');
+    const empleadoId = req.params.id;
+    
+    // Verificar que el empleado existe
+    const empleado = await Empleado.findById(empleadoId);
+    if (!empleado) {
+      return res.status(404).json({ mensaje: 'Empleado no encontrado' });
+    }
+    
+    // Buscar contratos donde el empleado tiene participaciones con comisión COMPLETAMENTE pagada
+    const contratos = await Contrato.find({
+      'participantes.empleado': empleadoId,
+      'participantes.estadoComision': 'pagada'
+    });
+    
+    let participacionesEliminadas = 0;
+    let liquidacionesEliminadas = 0;
+    let contratosActualizados = 0;
+    
+    for (const contrato of contratos) {
+      // Encontrar las participaciones pagadas de este empleado
+      const participacionesPagadas = contrato.participantes.filter(
+        p => p.empleado.toString() === empleadoId && p.estadoComision === 'pagada'
+      );
+      
+      if (participacionesPagadas.length === 0) continue;
+      
+      // Eliminar las liquidaciones asociadas a estas participaciones
+      for (const part of participacionesPagadas) {
+        // Eliminar liquidaciones que contengan esta participación
+        const resultado = await Liquidacion.deleteMany({
+          empleado: empleadoId,
+          'contratos.participanteId': part._id
+        });
+        liquidacionesEliminadas += resultado.deletedCount;
+      }
+      
+      // Eliminar las participaciones pagadas del contrato
+      const cantidadAntes = contrato.participantes.length;
+      contrato.participantes = contrato.participantes.filter(
+        p => !(p.empleado.toString() === empleadoId && p.estadoComision === 'pagada')
+      );
+      
+      participacionesEliminadas += cantidadAntes - contrato.participantes.length;
+      
+      // Verificar si el contrato ya no tiene participantes pendientes
+      // Si todas las comisiones fueron pagadas y eliminadas, el contrato queda "limpio"
+      const tienePendientes = contrato.participantes.some(
+        p => p.estadoComision !== 'pagada'
+      );
+      
+      // Si no hay más participantes, el contrato puede cambiar de estado
+      if (contrato.participantes.length === 0 && contrato.estado === 'liquidado') {
+        // Mantener como liquidado pero limpio
+        contrato.observaciones = (contrato.observaciones || '') + 
+          `\n[${new Date().toLocaleDateString('es-CO')}] Registros de comisiones pagadas limpiados.`;
+      }
+      
+      await contrato.save();
+      contratosActualizados++;
+    }
+    
+    // Actualizar estadísticas del empleado
+    empleado.estadisticas.totalComisionesPagadas = 0;
+    await empleado.save();
+    
+    res.json({
+      mensaje: 'Registros de comisiones pagadas eliminados correctamente',
+      detalles: {
+        participacionesEliminadas,
+        liquidacionesEliminadas,
+        contratosActualizados
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al limpiar registros', error: error.message });
+  }
+});
+
+// GET - Obtener resumen de comisiones pagadas para limpieza
+router.get('/:id/resumen-pagadas', async (req, res) => {
+  try {
+    const Liquidacion = require('../models/Liquidacion');
+    const empleadoId = req.params.id;
+    
+    // Buscar contratos con comisiones pagadas
+    const contratos = await Contrato.find({
+      'participantes.empleado': empleadoId,
+      'participantes.estadoComision': 'pagada'
+    }).populate('participantes.empleado', 'nombreCompleto');
+    
+    let totalPagado = 0;
+    let comisionesPagadas = [];
+    
+    for (const contrato of contratos) {
+      const participacionesPagadas = contrato.participantes.filter(
+        p => p.empleado._id.toString() === empleadoId && p.estadoComision === 'pagada'
+      );
+      
+      for (const part of participacionesPagadas) {
+        totalPagado += part.comisionCalculada || 0;
+        comisionesPagadas.push({
+          contratoId: contrato._id,
+          codigoContrato: contrato.codigo,
+          cliente: contrato.cliente.nombre,
+          tipoComision: part.tipoComisionNombre || 'Comisión Base',
+          montoPagado: part.comisionCalculada || 0,
+          fechaPago: part.fechaPago
+        });
+      }
+    }
+    
+    // Contar liquidaciones asociadas
+    const liquidaciones = await Liquidacion.countDocuments({
+      empleado: empleadoId,
+      estado: 'pagada'
+    });
+    
+    res.json({
+      totalPagado,
+      cantidadComisiones: comisionesPagadas.length,
+      cantidadLiquidaciones: liquidaciones,
+      comisiones: comisionesPagadas
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener resumen', error: error.message });
+  }
+});
+
 module.exports = router;
