@@ -36,6 +36,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET - Generar código automático para contrato
+// IMPORTANTE: Esta ruta debe estar ANTES de /:id para que no se confunda con un ID
+router.get('/generar-codigo', async (req, res) => {
+  try {
+    const count = await Contrato.countDocuments();
+    const year = new Date().getFullYear();
+    const codigo = `CTR-${year}-${String(count + 1).padStart(5, '0')}`;
+    res.json({ codigo });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al generar código', error: error.message });
+  }
+});
+
+// GET - Verificar si un código ya existe
+// IMPORTANTE: Esta ruta debe estar ANTES de /:id
+router.get('/verificar-codigo/:codigo', async (req, res) => {
+  try {
+    const existe = await Contrato.findOne({ codigo: req.params.codigo });
+    res.json({ existe: !!existe });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al verificar código', error: error.message });
+  }
+});
+
 // GET - Obtener un contrato por ID
 router.get('/:id', async (req, res) => {
   try {
@@ -49,28 +73,6 @@ router.get('/:id', async (req, res) => {
     res.json(contrato);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener contrato', error: error.message });
-  }
-});
-
-// GET - Generar código automático para contrato
-router.get('/generar-codigo', async (req, res) => {
-  try {
-    const count = await Contrato.countDocuments();
-    const year = new Date().getFullYear();
-    const codigo = `CTR-${year}-${String(count + 1).padStart(5, '0')}`;
-    res.json({ codigo });
-  } catch (error) {
-    res.status(500).json({ mensaje: 'Error al generar código', error: error.message });
-  }
-});
-
-// GET - Verificar si un código ya existe
-router.get('/verificar-codigo/:codigo', async (req, res) => {
-  try {
-    const existe = await Contrato.findOne({ codigo: req.params.codigo });
-    res.json({ existe: !!existe });
-  } catch (error) {
-    res.status(500).json({ mensaje: 'Error al verificar código', error: error.message });
   }
 });
 
