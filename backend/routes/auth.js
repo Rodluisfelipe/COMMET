@@ -9,8 +9,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Correos permitidos para login con Google
 const ALLOWED_GOOGLE_EMAILS = [
-  'gerencia@tecnophone.co',
-  'ventas@tecnophone.co'
+  'gerencia@tecnophone.co'
 ];
 
 // POST - Login
