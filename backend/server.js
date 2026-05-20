@@ -53,6 +53,7 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tipos-comision', require('./routes/tiposComision'));
 app.use('/api/empresas', require('./routes/empresas'));
+app.use('/api/store', require('./routes/store'));
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {

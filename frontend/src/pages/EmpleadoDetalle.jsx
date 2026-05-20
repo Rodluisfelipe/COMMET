@@ -106,7 +106,7 @@ export default function EmpleadoDetalle() {
       {/* Header */}
       <motion.div variants={itemVariants} className="flex items-center gap-4">
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Link to="/empleados" className="p-3 hover:bg-gray-100 rounded-xl transition-colors">
+          <Link to="/admin/empleados" className="p-3 hover:bg-gray-100 rounded-xl transition-colors">
             <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
           </Link>
         </motion.div>
@@ -306,7 +306,7 @@ export default function EmpleadoDetalle() {
                       >
                         <td className="px-4 py-3">
                           <Link 
-                            to={`/contratos/${c.contratoId}`}
+                            to={`/admin/contratos/${c.contratoId}`}
                             className="text-primary-600 hover:text-primary-700 font-medium"
                           >
                             {c.codigoContrato}

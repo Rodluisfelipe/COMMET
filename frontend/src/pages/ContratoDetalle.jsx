@@ -256,7 +256,7 @@ export default function ContratoDetalle() {
         className="flex flex-col sm:flex-row sm:items-center gap-4"
       >
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Link to="/contratos" className="p-3 hover:bg-gray-100 rounded-xl transition-colors self-start inline-block">
+          <Link to="/admin/contratos" className="p-3 hover:bg-gray-100 rounded-xl transition-colors self-start inline-block">
             <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
           </Link>
         </motion.div>

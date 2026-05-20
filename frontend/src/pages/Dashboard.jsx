@@ -91,10 +91,10 @@ export default function Dashboard() {
   }
 
   const stats = [
-    { label: 'Empleados', value: resumen.totalEmpleados, icon: UsersIcon, color: 'blue', link: '/empleados' },
-    { label: 'Contratos', value: resumen.estadisticasContratos.total, icon: DocumentTextIcon, color: 'indigo', link: '/contratos' },
-    { label: 'Por Liquidar', value: resumen.estadisticasContratos.pagados, icon: ClockIcon, color: 'yellow', link: '/liquidaciones' },
-    { label: 'Pendiente', value: formatCurrency(resumen.totalComisionesPendientes), icon: CurrencyDollarIcon, color: 'green', link: '/liquidaciones' }
+    { label: 'Empleados', value: resumen.totalEmpleados, icon: UsersIcon, color: 'blue', link: '/admin/empleados' },
+    { label: 'Contratos', value: resumen.estadisticasContratos.total, icon: DocumentTextIcon, color: 'indigo', link: '/admin/contratos' },
+    { label: 'Por Liquidar', value: resumen.estadisticasContratos.pagados, icon: ClockIcon, color: 'yellow', link: '/admin/liquidaciones' },
+    { label: 'Pendiente', value: formatCurrency(resumen.totalComisionesPendientes), icon: CurrencyDollarIcon, color: 'green', link: '/admin/liquidaciones' }
   ]
 
   const estados = [
@@ -155,7 +155,7 @@ export default function Dashboard() {
             <ArrowPathIcon className={`w-4 h-4 ${recalculando ? 'animate-spin' : ''}`} />
           </motion.button>
           <Link 
-            to="/liquidaciones/nueva"
+            to="/admin/liquidaciones/nueva"
             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
           >
             <PlusIcon className="w-4 h-4" />
@@ -194,7 +194,7 @@ export default function Dashboard() {
         <motion.div variants={item} className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">Estado de Contratos</h2>
-            <Link to="/contratos" className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+            <Link to="/admin/contratos" className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
               Ver todos <ArrowRightIcon className="w-3 h-3" />
             </Link>
           </div>
@@ -249,7 +249,7 @@ export default function Dashboard() {
                     transition={{ delay: 0.1 + idx * 0.05 }}
                   >
                     <Link
-                      to={`/empleados/${emp._id}`}
+                      to={`/admin/empleados/${emp._id}`}
                       className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -282,8 +282,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          <Link 
-            to="/liquidaciones"
+          <Link
+            to="/admin/liquidaciones"
             className="p-3 bg-gray-50 border-t border-gray-100 text-center text-sm text-blue-600 hover:text-blue-700 hover:bg-gray-100 transition-colors font-medium flex items-center justify-center gap-1"
           >
             Ver todas <ArrowRightIcon className="w-3 h-3" />
@@ -294,10 +294,10 @@ export default function Dashboard() {
       {/* Accesos Rápidos */}
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: 'Nuevo Contrato', desc: 'Registrar venta', icon: DocumentTextIcon, link: '/contratos', color: 'blue' },
-          { title: 'Nuevo Empleado', desc: 'Agregar personal', icon: UsersIcon, link: '/empleados', color: 'indigo' },
-          { title: 'Tipos Bonificación', desc: 'Configurar tipos', icon: ChartBarIcon, link: '/tipos-comision', color: 'purple' },
-          { title: 'Reportes', desc: 'Ver estadísticas', icon: BanknotesIcon, link: '/reportes', color: 'green' }
+          { title: 'Nuevo Contrato', desc: 'Registrar venta', icon: DocumentTextIcon, link: '/admin/contratos', color: 'blue' },
+          { title: 'Nuevo Empleado', desc: 'Agregar personal', icon: UsersIcon, link: '/admin/empleados', color: 'indigo' },
+          { title: 'Tipos Bonificación', desc: 'Configurar tipos', icon: ChartBarIcon, link: '/admin/tipos-comision', color: 'purple' },
+          { title: 'Reportes', desc: 'Ver estadísticas', icon: BanknotesIcon, link: '/admin/reportes', color: 'green' }
         ].map((acc, idx) => (
           <Link key={idx} to={acc.link}>
             <motion.div

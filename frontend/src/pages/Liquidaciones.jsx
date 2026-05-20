@@ -126,8 +126,8 @@ export default function Liquidaciones() {
         </div>
         <CanEdit>
           <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
-            <Link 
-              to="/liquidaciones/nueva" 
+            <Link
+              to="/admin/liquidaciones/nueva"
               className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300"
             >
               <BanknotesIcon className="w-5 h-5" />
@@ -225,7 +225,7 @@ export default function Liquidaciones() {
                         {(emp.comisiones || emp.contratos || []).map((c, idx) => (
                           <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
                             <td className="px-4 py-3">
-                              <Link to={`/contratos/${c.contratoId}`} className="font-medium text-blue-600 hover:underline">
+                              <Link to={`/admin/contratos/${c.contratoId}`} className="font-medium text-blue-600 hover:underline">
                                 {c.codigo}
                               </Link>
                             </td>
@@ -246,8 +246,8 @@ export default function Liquidaciones() {
                   {canEdit && (
                     <div className="mt-4 flex justify-end">
                       <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
-                        <Link 
-                          to={`/liquidaciones/nueva?empleado=${emp.empleado._id}`}
+                        <Link
+                          to={`/admin/liquidaciones/nueva?empleado=${emp.empleado._id}`}
                           className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300 font-medium"
                         >
                           <BanknotesIcon className="w-5 h-5" />

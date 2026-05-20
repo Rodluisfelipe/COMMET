@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './context/AuthContext'
+
+// Admin (sistema existente, oculto bajo /admin)
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -14,10 +16,17 @@ import Reportes from './pages/Reportes'
 import TiposBonificacion from './pages/TiposComision'
 import Empresas from './pages/Empresas'
 
-// Componente para rutas protegidas
+// Sitio público Licitronix
+import PublicLayout from './components/public/PublicLayout'
+import Home from './pages/public/Home'
+import Tienda from './pages/public/Tienda'
+import ProductoDetalle from './pages/public/ProductoDetalle'
+import Nosotros from './pages/public/Nosotros'
+import Contacto from './pages/public/Contacto'
+
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -25,15 +34,25 @@ function PrivateRoute({ children }) {
       </div>
     )
   }
-  
-  return isAuthenticated ? children : <Navigate to="/login" />
+
+  return isAuthenticated ? children : <Navigate to="/admin/login" replace />
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={
+      {/* Sitio público Licitronix SAS */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/tienda" element={<Tienda />} />
+        <Route path="/producto/:id" element={<ProductoDetalle />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/contacto" element={<Contacto />} />
+      </Route>
+
+      {/* Sistema interno (oculto) */}
+      <Route path="/admin/login" element={<Login />} />
+      <Route path="/admin" element={
         <PrivateRoute>
           <Layout />
         </PrivateRoute>
@@ -49,6 +68,13 @@ function AppRoutes() {
         <Route path="tipos-comision" element={<TiposBonificacion />} />
         <Route path="empresas" element={<Empresas />} />
       </Route>
+
+      {/* Redirecciones de compatibilidad (rutas viejas del panel) */}
+      <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/dashboard" element={<Navigate to="/admin" replace />} />
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
@@ -58,7 +84,7 @@ function App() {
     <Router>
       <AuthProvider>
         <AppRoutes />
-        <Toaster 
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,

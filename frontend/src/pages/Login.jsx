@@ -27,7 +27,7 @@ export default function Login() {
           color: '#fff',
         },
       })
-      navigate('/')
+      navigate('/admin')
     } catch (error) {
       toast.error(error.response?.data?.mensaje || 'Error al iniciar sesión con Google')
     } finally {

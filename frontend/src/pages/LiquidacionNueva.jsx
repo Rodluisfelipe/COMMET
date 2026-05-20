@@ -53,7 +53,7 @@ export default function LiquidacionNueva() {
     // Si no puede editar, redirigir
     if (!canEdit) {
       toast.error('No tienes permisos para crear liquidaciones')
-      navigate('/liquidaciones')
+      navigate('/admin/liquidaciones')
       return
     }
     fetchPendientes()
@@ -155,7 +155,7 @@ export default function LiquidacionNueva() {
       })
       
       toast.success('¡Liquidación creada exitosamente!')
-      navigate('/liquidaciones')
+      navigate('/admin/liquidaciones')
     } catch (error) {
       toast.error(error.response?.data?.mensaje || 'Error al crear liquidación')
     } finally {
@@ -177,7 +177,7 @@ export default function LiquidacionNueva() {
       {/* Header */}
       <motion.div variants={itemVariants} className="flex items-center gap-4">
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Link to="/liquidaciones" className="p-3 hover:bg-gray-100 rounded-xl transition-colors">
+          <Link to="/admin/liquidaciones" className="p-3 hover:bg-gray-100 rounded-xl transition-colors">
             <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
           </Link>
         </motion.div>
@@ -199,8 +199,8 @@ export default function LiquidacionNueva() {
         >
           <CurrencyDollarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 text-lg mb-3">No hay bonificaciones pendientes de liquidar</p>
-          <Link 
-            to="/contratos" 
+          <Link
+            to="/admin/contratos"
             className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium"
           >
             <DocumentTextIcon className="w-5 h-5" />
@@ -512,7 +512,7 @@ export default function LiquidacionNueva() {
           
           {/* Botones */}
           <motion.div variants={itemVariants} className="flex justify-end gap-3">
-            <Link to="/liquidaciones" className="btn-secondary">
+            <Link to="/admin/liquidaciones" className="btn-secondary">
               Cancelar
             </Link>
             <motion.button

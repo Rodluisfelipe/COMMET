@@ -307,7 +307,7 @@ export default function Empleados() {
                         <div className="flex items-center justify-end gap-1">
                           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                             <Link
-                              to={`/empleados/${emp._id}`}
+                              to={`/admin/empleados/${emp._id}`}
                               className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                               title="Ver detalle"
                             >

@@ -24,13 +24,13 @@ import {
 } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Empresas', href: '/empresas', icon: BuildingOfficeIcon },
-  { name: 'Empleados', href: '/empleados', icon: UsersIcon },
-  { name: 'Contratos', href: '/contratos', icon: DocumentTextIcon },
-  { name: 'Liquidaciones', href: '/liquidaciones', icon: CurrencyDollarIcon },
-  { name: 'Tipos Bonificación', href: '/tipos-comision', icon: TagIcon },
-  { name: 'Reportes', href: '/reportes', icon: ChartBarIcon },
+  { name: 'Dashboard', href: '/admin', icon: HomeIcon },
+  { name: 'Empresas', href: '/admin/empresas', icon: BuildingOfficeIcon },
+  { name: 'Empleados', href: '/admin/empleados', icon: UsersIcon },
+  { name: 'Contratos', href: '/admin/contratos', icon: DocumentTextIcon },
+  { name: 'Liquidaciones', href: '/admin/liquidaciones', icon: CurrencyDollarIcon },
+  { name: 'Tipos Bonificación', href: '/admin/tipos-comision', icon: TagIcon },
+  { name: 'Reportes', href: '/admin/reportes', icon: ChartBarIcon },
 ]
 
 // Componente de Logo animado
@@ -197,8 +197,8 @@ export default function Layout() {
           {/* Navegación */}
           <nav className="flex-1 mt-6 px-3 overflow-y-auto custom-scrollbar">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href || 
-                (item.href !== '/' && location.pathname.startsWith(item.href))
+              const isActive = location.pathname === item.href ||
+                (item.href !== '/admin' && location.pathname.startsWith(item.href))
               return (
                 <NavItem key={item.name} item={item} isActive={isActive} />
               )
